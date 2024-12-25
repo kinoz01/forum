@@ -29,7 +29,7 @@
       <div id="loginContainer" class="form-container">
         <h2 class="modal-title">Log In</h2>
 
-        <!-- Actual Log In Form (not connected to DB in this demo) -->
+        <!-- Actual Log In Form (connected to backend with fetch) -->
         <form id="loginForm" class="auth-form">
           <label for="loginEmail">Email or username <span>*</span></label>
           <input
@@ -68,8 +68,6 @@
 
       <!-- SIGN UP FORM (Initially Hidden) -->
       <div id="signUpContainer" class="form-container hidden">
-
-        <!-- Sign Up Form (email, username, password) -->
         <form id="signUpForm" class="auth-form">
           <label for="signUpEmail">Email <span>*</span></label>
           <input
@@ -117,6 +115,7 @@
     </div>
   </div>
 
+  <!-- Include your JavaScript (see below) -->
   <script src="../js/app.js"></script>
 </body>
 </html>

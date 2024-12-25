@@ -30,7 +30,7 @@ func ErrorHandler(w http.ResponseWriter, statusCode int, msg1, msg2 string, err 
 		StatusCode: statusCode,
 	}
 
-	tmpl, err := template.ParseFiles("frontend/templates/error.html")
+	tmpl, err := template.ParseFiles("static/templates/error.html")
 	if err != nil {
 		ServeCloudError(w, err, msg1, msg2, statusCode)
 		return
@@ -52,6 +52,7 @@ func ServeCloudError(w http.ResponseWriter, err error, msg1, msg2 string, status
 	errBody, err := GetErrorPage()
 	if err != nil {
 		http.Error(w, http.StatusText(statusCode), statusCode)
+		log.Println(err)
 		return
 	}
 	// Replace placeholders in the error page with dynamic messages

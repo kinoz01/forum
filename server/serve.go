@@ -7,17 +7,24 @@ import (
 )
 
 func Serve() {
-	Port.InitialisePorts()
-	InitialiseApiLinks()
-	db := InitDB()
-    defer db.Close()
+	Initialise()
+	Route()
+	Listen()
+}
 
+// Define server endPoints.
+func Route() {
 	http.HandleFunc("/", IndexHandler)
 	http.HandleFunc("/css/", FileHandler)
 	http.HandleFunc("/js/", FileHandler)
-	// Endpoint for user signup
 	http.HandleFunc("/signup", SignUpHandler)
+	http.HandleFunc("/login", LoginHandler)
+	http.HandleFunc("/session-check", SessionCheckHandler)
 
+}
+
+// Listen on a env Specific or random PORT for incoming requests.
+func Listen() {
 	listener, err := net.Listen("tcp", ":"+Port.Port)
 	if err != nil {
 		log.Fatalf("Server failed to start: %v", err)
@@ -26,7 +33,6 @@ func Serve() {
 	_, p, _ := net.SplitHostPort(listener.Addr().String())
 
 	log.Printf("Starting server at http://127.0.0.1:%s", p)
-
 	if err = http.Serve(listener, nil); err != nil {
 		log.Fatalf("Server failed to start: %v", err)
 	}
