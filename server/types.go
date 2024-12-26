@@ -1,5 +1,7 @@
 package server
 
+import "time"
+
 // Global variables Ports and ApiLinks.
 var (
 	Port     Ports
@@ -22,4 +24,12 @@ type User struct {
 	Email    string `json:"email"`
 	Username string `json:"username"`
 	Password string `json:"password"`
+}
+
+type Post struct {
+	ID        int       `json:"id"`
+	UserID    int       `json:"user_id"`
+	Title     string    `json:"title"`
+	Content   string    `json:"content"`
+	CreatedAt time.Time `json:"created_at"`
 }
