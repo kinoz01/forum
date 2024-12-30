@@ -34,7 +34,7 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error hashing password", http.StatusInternalServerError)
 		return
 	}
-	db := openDB()
+	db := OpenDB()
 	defer db.Close()
 	
 	// Insert user into DB

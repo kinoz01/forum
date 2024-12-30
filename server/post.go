@@ -12,7 +12,7 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db := openDB()
+	db := OpenDB()
 	defer db.Close()
 
 	rows, err := db.Query(`
@@ -75,7 +75,7 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
     }
 
     // Insert post
-    db := openDB()
+    db := OpenDB()
     defer db.Close()
 
     _, err = db.Exec(`

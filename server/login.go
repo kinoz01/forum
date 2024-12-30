@@ -27,7 +27,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Find user by email
 	var user User
-	db := openDB()
+	db := OpenDB()
 	defer db.Close()
 
 	row := db.QueryRow(`SELECT id, email, username, password FROM users WHERE email = ?`, creds.Email)

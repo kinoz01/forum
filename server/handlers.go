@@ -66,7 +66,7 @@ func getUserFromSession(r *http.Request) (*User, error) {
 	}
 
 	// Open the DB and query the sessions table
-	db := openDB()
+	db := OpenDB()
 	defer db.Close()
 
 	err = db.QueryRow(`SELECT user_id, expires_at FROM sessions WHERE token = ?`, token).

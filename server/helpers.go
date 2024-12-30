@@ -42,7 +42,7 @@ func ParseAndExecute(w http.ResponseWriter, data any, file string) {
 	buf.WriteTo(w)
 }
 
-func openDB() *sql.DB {
+func OpenDB() *sql.DB {
 	// Open or create SQLite DB
 	db, err := sql.Open("sqlite3", "./database/forum.db")
 	if err != nil {

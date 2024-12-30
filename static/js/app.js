@@ -125,6 +125,10 @@ loginForm.addEventListener("submit", async (event) => {
   const email = loginEmail.value.trim();
   const password = loginPassword.value.trim();
 
+  // Clear previous error message
+  const errorMsg = document.getElementById("loginErrorMsg");
+  if (errorMsg) errorMsg.remove();
+
   try {
     const res = await fetch("/login", {
       method: "POST",
@@ -134,7 +138,14 @@ loginForm.addEventListener("submit", async (event) => {
 
     if (!res.ok) {
       const errorText = await res.text();
-      alert(`Login failed: ${errorText}`);
+
+      // Display the error message under the inputs
+      const errorElement = document.createElement("div");
+      errorElement.id = "loginErrorMsg";
+      errorElement.className = "error-message"; // Use this class for styling
+      errorElement.textContent = errorText;
+
+      loginForm.appendChild(errorElement); // Add it below the form
     } else {
       // Expect JSON like { "message": "Login successful", "username": "Alice", "profilePic": "..." }
       const data = await res.json();
@@ -150,7 +161,13 @@ loginForm.addEventListener("submit", async (event) => {
     }
   } catch (err) {
     console.error("Error while logging in:", err);
-    alert("Network error occurred");
+
+    const errorElement = document.createElement("div");
+    errorElement.id = "loginErrorMsg";
+    errorElement.className = "error-message";
+    errorElement.textContent = "Network error occurred";
+
+    loginForm.appendChild(errorElement);
   }
 
   // Reset form
@@ -168,6 +185,10 @@ signUpForm.addEventListener("submit", async (e) => {
   const username = signUpUsername.value.trim();
   const password = signUpPassword.value.trim();
 
+  // Clear previous error message
+  const errorMsg = document.getElementById("signUpErrorMsg");
+  if (errorMsg) errorMsg.remove();
+
   try {
     const res = await fetch("/signup", {
       method: "POST",
@@ -177,17 +198,31 @@ signUpForm.addEventListener("submit", async (e) => {
 
     if (!res.ok) {
       const errorText = await res.text();
-      alert(`Sign Up Error: ${errorText}`);
+
+      // Display the error message under the inputs
+      const errorElement = document.createElement("div");
+      errorElement.id = "signUpErrorMsg";
+      errorElement.className = "error-message"; // Use this class for styling
+      errorElement.textContent = errorText;
+
+      signUpForm.appendChild(errorElement); // Add it below the form
     } else {
       const successText = await res.text();
-      alert(`Sign Up Success: ${successText}`);
+
+      // Show welcome popup for first-time signup
+      showWelcomePopup(username);
 
       // Switch to login form
       signUpContainer.classList.add("hidden");
       loginContainer.classList.remove("hidden");
     }
   } catch (error) {
-    alert("Network error: " + error.message);
+    const errorElement = document.createElement("div");
+    errorElement.id = "signUpErrorMsg";
+    errorElement.className = "error-message";
+    errorElement.textContent = "Network error: " + error.message;
+
+    signUpForm.appendChild(errorElement);
   }
 
   // Reset sign up form
@@ -195,12 +230,32 @@ signUpForm.addEventListener("submit", async (e) => {
   validateSignUp();
 });
 
+// Function to show a welcome popup
+function showWelcomePopup(username) {
+  const popup = document.createElement("div");
+  popup.className = "welcome-popup"; // Style it using CSS
+  popup.innerHTML = `
+    <div class="popup-content">
+      <h2>Welcome, ${username}!</h2>
+      <p>Thank you for signing up! We're excited to have you on board.</p>
+      <button id="closeWelcomePopup">Got it!</button>
+    </div>
+  `;
+  document.body.appendChild(popup);
+
+  // Close the popup on button click
+  const closePopupBtn = document.getElementById("closeWelcomePopup");
+  closePopupBtn.addEventListener("click", () => {
+    popup.remove();
+  });
+}
+
 /*************************************
  * 6. Load & Display Posts
  *************************************/
 async function loadPosts() {
   try {
-    const res = await fetch("/posts", { method: "GET" });
+    const res = await fetch("/get-post", { method: "GET" });
     if (!res.ok) {
       const err = await res.text();
       console.error("Failed to fetch posts:", err);
@@ -239,35 +294,18 @@ function renderPosts(posts) {
 fabAddPost?.addEventListener("click", () => {
   newPostModal.classList.remove("hidden");
 });
-closeNewPostModalBtn?.addEventListener("click", () => {
-  newPostModal.classList.add("hidden");
+
+// Close modal when clicking outside of the dialog
+window.addEventListener("click", (e) => {
+  if (e.target === newPostModal) {
+    newPostModal.classList.add("hidden");
+    newPostForm.reset(); // Clear the form inputs when closing
+  }
 });
 
-// Submit new post
-newPostForm?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const title = postTitleInput.value.trim();
-  const content = postContentInput.value.trim();
-
-  try {
-    const res = await fetch("/posts", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, content }),
-    });
-    if (!res.ok) {
-      const errText = await res.text();
-      alert("Failed to create post: " + errText);
-    } else {
-      alert("Post created!");
-      newPostModal.classList.add("hidden");
-      newPostForm.reset();
-      // Reload posts to see the new one
-      loadPosts();
-    }
-  } catch (err) {
-    alert("Network error creating post: " + err.message);
-  }
+closeNewPostModalBtn?.addEventListener("click", () => {
+  newPostModal.classList.add("hidden");
+  newPostForm.reset(); // Clear the form inputs when closing
 });
 
 /*************************************
@@ -310,7 +348,6 @@ function showLoggedInNav(username, profilePicURL) {
         return;
       }
       const msg = await res.text();
-      alert(msg);
       showLoggedOutNav();
     } catch (error) {
       alert("Logout error: " + error.message);

@@ -20,16 +20,9 @@ func Route() {
 	http.HandleFunc("/signup", SignUpHandler)
 	http.HandleFunc("/login", LoginHandler)
 	http.HandleFunc("/session-check", SessionCheckHandler)
-	http.HandleFunc("/posts", func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodGet:
-			GetPostsHandler(w, r)
-		case http.MethodPost:
-			CreatePostHandler(w, r)
-		default:
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		}
-	})
+	http.HandleFunc("/get-post", GetPostsHandler)
+	http.HandleFunc("/create-post", CreatePostHandler)
+	http.HandleFunc("/logout", LogoutHandler)
 }
 
 // Listen on a env Specific or random PORT for incoming requests.
